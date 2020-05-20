@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:owllangu/words.dart';
 
 void main() {
   runApp(MyApp());
@@ -21,17 +24,53 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
   final String title;
+
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  int count = 0;
+  String eng = "";
+  String rus = "";
+  var firstTime = true;
 
-  void _incrementCounter() {
+  void _setRusText() {
     setState(() {
-      _counter++;
+      rus = words[count].ru;
     });
+  }
+
+  void _successGoNext() {
+    setState(() {
+      count += 1;
+      _getNewItems();
+    });
+  }
+
+  void _notSuccessGoNext() {
+    setState(() {
+      count += 1;
+      _getNewItems();
+    });
+  }
+
+  void _init() {
+    if (firstTime) {
+      words.shuffle(new Random(DateTime.now().millisecondsSinceEpoch));
+      _getNewItems();
+      firstTime = false;
+    }
+  }
+
+  void _getNewItems() {
+    if (count < words.length) {
+      eng = words[count].eng;
+      rus = "";
+    } else {
+      eng = "Thats all";
+      rus = "Thats all";
+    }
   }
 
   @override
@@ -42,6 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
+    _init();
     return Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
@@ -68,23 +108,41 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
+            Card(
+                child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      eng,
+                      style: Theme.of(context).textTheme.bodyText1,
+                    ))),
+            Card(
+                child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      rus,
+                      style: Theme.of(context).textTheme.bodyText1,
+                    ))),
+            ButtonBar(
+              alignment: MainAxisAlignment.spaceAround,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                OutlineButton(
+                  child: Text("Show Later"),
+                  onPressed: _notSuccessGoNext,
+                ),
+                OutlineButton(
+                  child: Text("Show translation"),
+                  onPressed: _setRusText,
+                ),
+                OutlineButton(
+                  child: Text("I know it"),
+                  onPressed: _successGoNext,
+                )
+              ],
+            )
           ],
         ),
       ),
-
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ),
-// This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
