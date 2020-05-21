@@ -31,26 +31,34 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int count = 0;
-  String eng = "";
-  String rus = "";
-  var firstTime = true;
-
-  void _setRusText() {
-    setState(() {
-      rus = words[count].ru;
-    });
-  }
+  int listSize = 0;
+  String topText = "";
+  String bottomText = "";
+  int know = 0;
+  int forgot = 0;
+  bool firstTime = true;
+  bool showEng = true;
 
   void _successGoNext() {
     setState(() {
       count += 1;
+      know += 1;
       _getNewItems();
     });
   }
 
   void _notSuccessGoNext() {
     setState(() {
+      forgot += 1;
+      words.add(words[count]);
       count += 1;
+      _getNewItems();
+    });
+  }
+
+  void _changeLanguage() {
+    setState(() {
+      showEng = !showEng;
       _getNewItems();
     });
   }
@@ -64,13 +72,32 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _getNewItems() {
-    if (count < words.length) {
-      eng = words[count].eng;
-      rus = "";
+    listSize = words.length;
+    if (count < listSize) {
+      if (showEng) {
+        topText = words[count].eng.toLowerCase();
+      } else {
+        topText = words[count].ru.toLowerCase();
+      }
+      bottomText = "";
     } else {
-      eng = "Thats all";
-      rus = "Thats all";
+      topText = "Thats all";
+      bottomText = "Thats all";
     }
+  }
+
+  void _setRusText() {
+    setState(() {
+      if (bottomText == "") {
+        if (showEng) {
+          bottomText = words[count].ru.toLowerCase();
+        } else {
+          bottomText = words[count].eng.toLowerCase();
+        }
+      } else {
+        bottomText = "";
+      }
+    });
   }
 
   @override
@@ -106,40 +133,64 @@ class _MyHomePageState extends State<MyHomePage> {
           // center the children vertically; the main axis here is the vertical
           // axis because Columns are vertical (the cross axis would be
           // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            Card(
-                child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text(
-                      eng,
-                      style: Theme.of(context).textTheme.bodyText1,
-                    ))),
-            Card(
-                child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text(
-                      rus,
-                      style: Theme.of(context).textTheme.bodyText1,
-                    ))),
-            ButtonBar(
-              alignment: MainAxisAlignment.spaceAround,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                OutlineButton(
-                  child: Text("Show Later"),
-                  onPressed: _notSuccessGoNext,
-                ),
-                OutlineButton(
-                  child: Text("Show translation"),
-                  onPressed: _setRusText,
-                ),
-                OutlineButton(
-                  child: Text("I know it"),
-                  onPressed: _successGoNext,
-                )
-              ],
-            )
+            Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        '$know / $forgot',
+                        style: Theme.of(context).textTheme.bodyText1,
+                      ),
+                      OutlineButton(
+                        child: Text("Change language"),
+                        onPressed: _changeLanguage,
+                      ),
+                      Text(
+                        '$count / $listSize',
+                        style: Theme.of(context).textTheme.bodyText1,
+                      )
+                    ])),
+            Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Card(
+                      child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(
+                            topText,
+                            textScaleFactor: 1.5,
+                            style: Theme.of(context).textTheme.bodyText1,
+                          ))),
+                  Card(
+                      child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(
+                            bottomText,
+                            textScaleFactor: 1.5,
+                            style: Theme.of(context).textTheme.bodyText1,
+                          ))),
+                  ButtonBar(
+                    alignment: MainAxisAlignment.spaceAround,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      OutlineButton(
+                        child: Text("Show Later"),
+                        onPressed: _notSuccessGoNext,
+                      ),
+                      OutlineButton(
+                        child: Text("Show translation"),
+                        onPressed: _setRusText,
+                      ),
+                      OutlineButton(
+                        child: Text("I know it"),
+                        onPressed: _successGoNext,
+                      )
+                    ],
+                  )
+                ])
           ],
         ),
       ),
