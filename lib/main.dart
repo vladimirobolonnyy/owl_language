@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:owllangu/words.dart';
+import 'package:owllangu/words_view_model.dart';
 
 void main() {
   runApp(MyApp());
@@ -30,74 +31,42 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int count = 0;
-  int listSize = 0;
-  String topText = "";
-  String bottomText = "";
-  int know = 0;
-  int forgot = 0;
-  bool firstTime = true;
-  bool showEng = true;
+  final model = WordsViewModel.instance;
 
   void _successGoNext() {
     setState(() {
-      count += 1;
-      know += 1;
-      _getNewItems();
+      model.successGoNext();
     });
   }
 
   void _notSuccessGoNext() {
     setState(() {
-      forgot += 1;
-      words.add(words[count]);
-      count += 1;
-      _getNewItems();
+      model.notSuccessGoNext();
     });
   }
 
   void _changeLanguage() {
     setState(() {
-      showEng = !showEng;
-      _getNewItems();
+      model.changeLanguage();
     });
   }
 
   void _init() {
-    if (firstTime) {
-      words.shuffle(new Random(DateTime.now().millisecondsSinceEpoch));
-      _getNewItems();
-      firstTime = false;
-    }
+      setState(() {
+        model.init();
+      });
   }
 
-  void _getNewItems() {
-    listSize = words.length;
-    if (count < listSize) {
-      if (showEng) {
-        topText = words[count].eng.toLowerCase();
-      } else {
-        topText = words[count].ru.toLowerCase();
-      }
-      bottomText = "";
-    } else {
-      topText = "Thats all";
-      bottomText = "Thats all";
-    }
-  }
-
-  void _setRusText() {
+  void _showTranslation() {
     setState(() {
-      if (bottomText == "") {
-        if (showEng) {
-          bottomText = words[count].ru.toLowerCase();
-        } else {
-          bottomText = words[count].eng.toLowerCase();
-        }
-      } else {
-        bottomText = "";
-      }
+      model.showTranslation();
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _init();
   }
 
   @override
@@ -108,7 +77,6 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    _init();
     return Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
@@ -141,7 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Text(
-                        '$know / $forgot',
+                        "${model.know} / ${model.forgot}",
                         style: Theme.of(context).textTheme.bodyText1,
                       ),
                       OutlineButton(
@@ -149,7 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         onPressed: _changeLanguage,
                       ),
                       Text(
-                        '$count / $listSize',
+                        '${model.count} / ${model.listSize}',
                         style: Theme.of(context).textTheme.bodyText1,
                       )
                     ])),
@@ -160,7 +128,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Text(
-                            topText,
+                            "${model.topText}",
                             textScaleFactor: 1.5,
                             style: Theme.of(context).textTheme.bodyText1,
                           ))),
@@ -168,7 +136,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Text(
-                            bottomText,
+                            "${model.bottomText}",
                             textScaleFactor: 1.5,
                             style: Theme.of(context).textTheme.bodyText1,
                           ))),
@@ -182,7 +150,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                       OutlineButton(
                         child: Text("Show translation"),
-                        onPressed: _setRusText,
+                        onPressed: _showTranslation,
                       ),
                       OutlineButton(
                         child: Text("I know it"),
