@@ -50,8 +50,8 @@ class DatabaseHelper {
             $columnId INTEGER PRIMARY KEY,
             $columnRus TEXT NOT NULL,
             $columnEng TEXT NOT NULL,
-            $columnShowed INTEGER NOT NULL
-            $columnKnow INTEGER NOT NULL
+            $columnShowed INTEGER NOT NULL,
+            $columnKnow INTEGER NOT NULL,
             $columnLater INTEGER NOT NULL
           )
           ''');

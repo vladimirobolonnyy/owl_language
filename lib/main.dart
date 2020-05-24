@@ -1,7 +1,4 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:owllangu/words.dart';
 import 'package:owllangu/words_view_model.dart';
 
 void main() {
@@ -51,10 +48,17 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void _init() {
-      setState(() {
-        model.init();
-      });
+  void _revert() {
+    setState(() {
+      model.revert();
+    });
+  }
+
+  void _init() async {
+    var a = await model.init();
+    setState(() {
+      a;
+    });
   }
 
   void _showTranslation() {
@@ -116,6 +120,10 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: Text("Change language"),
                         onPressed: _changeLanguage,
                       ),
+                      OutlineButton(
+                        child: Text("Revert"),
+                        onPressed: _revert,
+                      ),
                       Text(
                         '${model.count} / ${model.listSize}',
                         style: Theme.of(context).textTheme.bodyText1,
@@ -132,6 +140,10 @@ class _MyHomePageState extends State<MyHomePage> {
                             textScaleFactor: 1.5,
                             style: Theme.of(context).textTheme.bodyText1,
                           ))),
+                  Text(
+                    '${model.currentStats}',
+                    style: Theme.of(context).textTheme.bodyText1,
+                  ),
                   Card(
                       child: Padding(
                           padding: const EdgeInsets.all(16.0),

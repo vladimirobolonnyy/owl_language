@@ -26,7 +26,10 @@ class WordsRepo {
   Future<List<EngRuWordsEntity>> getAll() async {
     final savedWords = await dbHelper.queryAllWords();
     final networkWords = api.queryAllWords();
+    print ("savedWords:= $savedWords");
+    print ("networkWords:= $networkWords");
 
+    //ToDo fix here> тут разные объекты в ссетах
     if (savedWords.length == networkWords.length) {
       return savedWords;
     } else {
@@ -34,20 +37,16 @@ class WordsRepo {
       final networkSet = networkWords.toSet();
       final diff = networkSet.difference(savedSet);
       diff.forEach((element) {
+        print ("_insert:= $element");
         _insert(element);
       });
       return await dbHelper.queryAllWords();
     }
   }
 
-  void _query() async {
-    final allRows = await dbHelper.queryAllRows();
-    print('query all rows:');
-    allRows.forEach((row) => print(row));
-  }
-
   void update(EngRuWordsEntity word) async {
     Map<String, dynamic> row = {
+      DatabaseHelper.columnId: word.id,
       DatabaseHelper.columnEng: word.eng,
       DatabaseHelper.columnRus: word.ru,
       DatabaseHelper.columnShowed: word.show,
