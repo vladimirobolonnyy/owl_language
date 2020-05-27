@@ -26,10 +26,10 @@ class WordsRepo {
   Future<List<EngRuWordsEntity>> getAll() async {
     final savedWords = await dbHelper.queryAllWords();
     final networkWords = api.queryAllWords();
-    print ("savedWords:= $savedWords");
-    print ("networkWords:= $networkWords");
+    print("savedWords:= $savedWords");
+    print("networkWords:= $networkWords");
 
-    //ToDo fix here> тут разные объекты в ссетах
+    //ToDo fix here> тут разные объекты в сетах
     if (savedWords.length == networkWords.length) {
       return savedWords;
     } else {
@@ -37,8 +37,14 @@ class WordsRepo {
       final networkSet = networkWords.toSet();
       final diff = networkSet.difference(savedSet);
       diff.forEach((element) {
-        print ("_insert:= $element");
+        print("_insert:= $element");
         _insert(element);
+      });
+
+      final diff2 = savedSet.difference(networkSet);
+      diff2.forEach((element) {
+        print("_delete:= $element");
+        _delete(element);
       });
       return await dbHelper.queryAllWords();
     }
@@ -62,5 +68,4 @@ class WordsRepo {
     final rowsDeleted = await dbHelper.delete(id);
     print('deleted $rowsDeleted row(s): row $id');
   }
-
 }

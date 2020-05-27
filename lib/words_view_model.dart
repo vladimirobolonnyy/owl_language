@@ -23,10 +23,9 @@ class WordsViewModel {
   Future<List<EngRuWordsEntity>> getAll() async {
     final savedWords = await repo.getAll();
     savedWords.shuffle(new Random(DateTime.now().millisecondsSinceEpoch));
-    print ("savedWords before := $savedWords");
-    savedWords
-        .sort((a, b) => b.later.compareTo(a.later) );
-    print ("savedWords:= $savedWords");
+    print("savedWords before := $savedWords");
+    savedWords.sort((a, b) => (a.know - a.later) - (b.know - b.later));
+    print("savedWords:= $savedWords");
     return savedWords;
   }
 

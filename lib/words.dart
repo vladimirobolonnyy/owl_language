@@ -23,5 +23,5 @@ class EngRuWordsEntity {
   int later;
 
   @override
-  String toString() => 'EngRuWords[$id, $eng, $ru, $show, $know, $later]';
+  String toString() => 'EngRuWordsEntity[$id, $eng, $ru, $show, $know, $later]';
 }

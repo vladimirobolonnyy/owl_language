@@ -79,8 +79,8 @@ class DatabaseHelper {
     final list = allRows.map((e) =>
         EngRuWordsEntity(
           e[columnId],
-          e[columnRus],
           e[columnEng],
+          e[columnRus],
           e[columnShowed],
           e[columnKnow],
           e[columnLater],
